@@ -13,5 +13,8 @@ routes.delete('/auth', authController.logout)
 routes.get('/clientes', validate, clienteController.index)
 routes.get('/clientes/:id', validate, clienteController.show)
 routes.post('/clientes', clienteController.create)
+routes.put('/clientes', validate, clienteController.edit)
+routes.delete('/clientes/:id', validate, clienteController.destroy)
+routes.patch('/clientes/:id', validate, clienteController.restore)
 
 module.exports = routes;

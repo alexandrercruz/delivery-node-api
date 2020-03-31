@@ -9,7 +9,9 @@ exports.up = function(knex) {
         table.string('imagem')
         table.boolean('ativo').defaultTo(false)
         table.boolean('bloqueado').defaultTo(false)
-        table.timestamps(true, true)
+        table.timestamp('created_at').defaultTo(knex.fn.now())
+        table.timestamp('updated_at')
+        table.timestamp('deleted_at')
     })
 }
 
