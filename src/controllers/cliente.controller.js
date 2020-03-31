@@ -1,16 +1,42 @@
 const bcrypt = require('bcrypt')
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database/db')
+const moment = require('moment')
 
 module.exports = {
     async index(req, res) {
         try {
+            const { deleted } = req.headers
             const { role } = req.user
 
             if (role !== 'cliente') return res.sendStatus(403)
 
-            const clientes = await db('clientes').select('id', 'nome', 'cpf', 'fone', 'email', 'imagem', 'ativo', 'bloqueado', 'created_at', 'updated_at', 'deleted_at')
-            return res.json(clientes)
+            const columns = [
+                'id',
+                'nome',
+                'cpf',
+                'fone',
+                'email',
+                'imagem',
+                'ativo',
+                'bloqueado',
+                'created_at',
+                'updated_at'
+            ]
+
+            const query = db('clientes').select(columns)
+
+            if (deleted) {
+                query.whereNotNull('deleted_at').select('deleted_at')
+            } else {
+                query.whereNull('deleted_at')
+            }
+
+            result = await query
+
+            if (result.length > 0) return res.json(result)
+
+            return res.sendStatus(204)
         } catch (error) {
             return res.status(400).send(error)
         }
@@ -18,13 +44,38 @@ module.exports = {
 
     async show(req, res) {
         try {
+            const { deleted } = req.headers
+            const { id } = req.params
             const { role } = req.user
 
             if (role !== 'cliente') return res.sendStatus(403)
 
-            const { id } = req.params
-            const cliente = await db('clientes').where('id', id).first()
-            return res.json(cliente)
+            const columns = [
+                'id',
+                'nome',
+                'cpf',
+                'fone',
+                'email',
+                'imagem',
+                'ativo',
+                'bloqueado',
+                'created_at',
+                'updated_at'
+            ]
+
+            const query = db('clientes').where({ id: id, deleted_at: null }).select(columns).first()
+
+            if (deleted) {
+                query.whereNotNull('deleted_at').select('deleted_at')
+            } else {
+                query.whereNull('deleted_at')
+            }
+
+            result = await query
+
+            if (result) return res.json(result)
+
+            return res.sendStatus(204)
         } catch (error) {
             return res.status(400).send(error)
         }
@@ -65,7 +116,7 @@ module.exports = {
                 imagem,
                 ativo,
                 bloqueado,
-                updated_at: db.fn.now()
+                updated_at: moment().format()
             })
 
             return res.sendStatus(204)
@@ -81,7 +132,7 @@ module.exports = {
             if (role !== 'cliente') return res.sendStatus(403)
 
             const { id } = req.params
-            await db('clientes').where('id', id).update({ deleted_at: db.fn.now() })
+            await db('clientes').where('id', id).update({ deleted_at: moment().format() })
             return res.sendStatus(204)
         } catch (error) {
             return res.status(400).send(error)
