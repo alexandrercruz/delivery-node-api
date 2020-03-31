@@ -1,3 +1,5 @@
+const moment = require('moment')
+
 exports.up = function(knex) {
     return knex.schema.createTable('clientes', function(table) {
         table.uuid('id').primary()
@@ -9,7 +11,7 @@ exports.up = function(knex) {
         table.string('imagem')
         table.boolean('ativo').defaultTo(false)
         table.boolean('bloqueado').defaultTo(false)
-        table.timestamp('created_at').defaultTo(knex.fn.now())
+        table.timestamp('created_at').defaultTo(moment().format())
         table.timestamp('updated_at')
         table.timestamp('deleted_at')
     })
