@@ -4,12 +4,13 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "start": "nodemon src/app.js"
+        "start": "nodemon bin/server.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@sendgrid/mail": "^7.0.0",
         "bcrypt": "^3.0.0",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
@@ -17,7 +18,8 @@
         "knex": "^0.20.13",
         "moment": "^2.24.0",
         "sqlite3": "^4.1.1",
-        "uuid": "^7.0.2"
+        "uuid": "^7.0.2",
+        "validator": "^13.0.0"
     },
     "devDependencies": {
         "nodemon": "^2.0.2"
